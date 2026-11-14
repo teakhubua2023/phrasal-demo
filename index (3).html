@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phrase Collocations – Free Demo</title>
+<style>
+:root{--bg:#f3f5fa;--card:#fff;--ink:#14213d;--mute:#5d6882;--line:#d9deea;--blue:#2b59e6;--green:#14966a;--red:#d64545;--amber:#f0a500;--on:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1626;--card:#18223a;--ink:#eef1f8;--mute:#9aa6c2;--line:#2b3757;--blue:#7b9bff;--green:#3ccb98;--red:#ff7b7b;--amber:#ffc83d;--on:#0b1020}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI","Noto Sans Georgian",sans-serif}
+#app{max-width:680px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;line-height:1.15;margin:.3em 0 .2em}
+h2{font-size:1.2rem}
+a{color:var(--blue)}
+.back{text-decoration:none;font-weight:600}
+.lead{color:var(--mute);margin:0 0 1.4em}
+.meta{color:var(--mute);font-size:.9rem;margin:.6em 0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.btn{background:var(--blue);color:var(--on);border:2px solid var(--blue);border-radius:10px;padding:.65em 1.3em;font-weight:600;text-decoration:none;display:inline-block}
+.btn.ghost{background:transparent;color:var(--blue)}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:12px;margin:18px 0;flex-wrap:wrap}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;padding:0;margin-top:28px}
+.levels,.steps{display:grid;gap:12px}
+.lvl,.step{display:flex;align-items:center;gap:16px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;text-decoration:none;color:inherit}
+.lvl .n{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.2rem;background:var(--blue);color:var(--on)}
+.lvl small,.step small{display:block;color:var(--mute)}
+.lvl .tag{margin-left:auto;font-weight:600;color:var(--blue);white-space:nowrap}
+.lvl.done{border-color:var(--green)}.lvl.done .n{background:var(--green)}.lvl.done .tag{color:var(--green)}
+.lvl.locked,.lvl.soon{opacity:.55}.lvl.locked .n,.lvl.soon .n{background:var(--line);color:var(--mute)}.lvl.locked .tag,.lvl.soon .tag{color:var(--mute)}
+.step{flex-direction:column;align-items:flex-start;gap:0}.step.done{border-color:var(--green)}.step.done b::after{content:" ✓";color:var(--green)}
+.card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:260px;padding:24px;text-align:center;background:var(--card);border:2px solid var(--line);border-radius:18px}
+.card.back{border-color:var(--blue)}
+.card .en{font-size:2.2rem;font-weight:700}.card .ka{font-size:1.4rem;font-weight:600}.card small{color:var(--mute)}.card em{color:var(--blue)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.q{font-size:1.35rem;line-height:1.35;margin:.3em 0 1em;font-weight:600}.q i{font-weight:400}
+.blank{border-bottom:3px solid var(--blue);letter-spacing:2px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px 14px}
+.opt b{width:34px;height:34px;flex:none;border:2px solid var(--mute);border-radius:50%;display:grid;place-items:center;font-size:.95rem}
+.opt:not(:disabled):hover,.opt.pick{border-color:var(--blue)}
+.opt.right{border-color:var(--green);background:color-mix(in srgb,var(--green) 14%,var(--card))}
+.opt.wrong{border-color:var(--red);background:color-mix(in srgb,var(--red) 14%,var(--card))}
+.fb{margin:16px 0;padding:12px 16px;border-left:5px solid var(--green);background:var(--card);border-radius:8px}.fb.bad{border-color:var(--red)}.fb p{margin:.3em 0}
+.score{display:flex;flex-direction:column;align-items:center;padding:20px;margin:12px 0;border:3px solid var(--green);border-radius:18px;background:var(--card)}
+.score.bad{border-color:var(--red)}.score strong{font-size:3.2rem;line-height:1}.score span{color:var(--mute)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.m{display:block;width:100%;margin:0 0 8px;padding:10px;font-size:.92rem;background:var(--card);border:2px solid var(--line);border-radius:10px}
+.m.on{border-color:var(--blue)}.m.ok{border-color:var(--green);opacity:.55}.m.bad{border-color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(4,1fr)}}
+.mem{min-height:92px;padding:6px;font-size:.88rem;background:var(--card);border:2px solid var(--line);border-radius:12px}
+.mem span{visibility:hidden}.mem::before{content:"?";font-size:1.6rem;color:var(--blue)}
+.mem.up,.mem.done{border-color:var(--blue)}.mem.done{border-color:var(--green)}
+.mem.up span,.mem.done span{visibility:visible}.mem.up::before,.mem.done::before{content:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.levels{gap:16px}
+.stage{font-size:1rem;color:var(--mute);margin:18px 0 0}
+.lvl{gap:20px;padding:22px 24px;border-radius:22px;background:var(--card)}
+.lvl .n{width:64px;height:64px;font-size:1.7rem}
+.lvl b{font-size:1.2rem;line-height:1.3;display:block}
+.lvl small{font-size:1rem;margin-top:2px}
+.lvl.done small{color:var(--green)}
+.lvl.locked small,.lvl.soon small{color:var(--mute)}
+.lvl.open{border-color:var(--blue)}
+
+.step.locked{opacity:.55;cursor:default}
+.slot{min-height:64px;display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px dashed var(--line);border-radius:14px;margin:12px 0;background:var(--card)}
+.words{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.w{padding:8px 14px;background:var(--card);border:2px solid var(--line);border-radius:10px}
+.w:hover{border-color:var(--blue)}
+.field{width:100%;font:inherit;font-size:1.2rem;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);letter-spacing:1px}
+
+.passage{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0 18px;line-height:1.7}
+.gapn{color:var(--blue);white-space:nowrap}
+.erow{display:grid;grid-template-columns:2rem repeat(4,1fr);gap:8px;align-items:center;margin:8px 0}
+.eo{padding:8px 6px;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:10px;font-size:.95rem}
+.eo.sel{border-color:var(--blue)}.eo.right{border-color:var(--green);background:color-mix(in srgb,var(--green) 14%,var(--card))}.eo.wrong{border-color:var(--red);background:color-mix(in srgb,var(--red) 14%,var(--card))}
+@media(max-width:560px){.erow{grid-template-columns:2rem 1fr 1fr}.erow span{grid-row:span 2}}
+
+</style></head>
+<body><div id="app"></div>
+<p class="lic">Free demo: Level 1 and one bonus task. The full course has 20 levels, 200 phrases and 17 bonus tasks. Want access? Contact your teacher.</p>
+<script>
+const PASS_PERCENT=80;const TEST_SIZE=20;const STEP_PASS=80;
+const LEVELS=[{"id":1,"title":"Level 1","range":"intention to … made from","ready":true,"exam":{"t":"Tbilisi is known (1) the city of sulfur baths. The old town is famous (2) its narrow streets and wooden balconies. Last Sunday my cousin and I had no intention (3) stay at home, so we visited it. We spent an hour looking (4) the streets and taking photos. Then we looked (5) a small cafe because we were hungry. The cafe was run (6) an old couple (7) are always happy to welcome tourists. The cafe has (8) lot of wooden tables, and the wine is made (9) local grapes. Many people say there is a clear link (10) good food and a happy mood, so we ate a lot. Rich food often leads (11) a long nap, and (12) a result we went back to the hotel early.","g":[["as","for","of","by"],["for","as","of","at"],["to","of","for","at"],["around","after","out","forward"],["for","after","off","forward"],["by","with","from","for"],["who","which","whose","whom"],["a","an","the","some"],["from","by","with","to"],["between","among","with","of"],["to","into","for","at"],["as","in","at","by"]]},"verbs":[{"p":"intention to","ka":"განზრახვა რაღაცის გაკეთების","def":"Having a plan, purpose, or desire to do a specific action.","ex":"She has no intention to change her mind."},{"p":"known as","ka":"ცნობილი, როგორც...","def":"Called by a specific name, or recognized as a specific type of person or thing.","ex":"Paris is known as the City of Light."},{"p":"known for","ka":"ცნობილი რაღაცით","def":"Regarded or famous for a particular feature, skill, or achievement.","ex":"Georgia is known for its wine."},{"p":"leads to","ka":"მივყავართ (რაღაც შედეგამდე)","def":"To result in something; to cause a particular situation to happen.","ex":"Hard work often leads to success."},{"p":"link between","ka":"კავშირი ორ რამეს შორის","def":"A connection, relationship, or bond between two things or people.","ex":"There is a link between sleep and memory."},{"p":"look after","ka":"მოვლა / პატრონობა","def":"To take care of someone or something, ensuring they are safe and well.","ex":"I look after my little brother."},{"p":"look around","ka":"დათვალიერება","def":"To walk around a room, building, or city to see what is there.","ex":"We looked around the old town."},{"p":"look for","ka":"ძებნა","def":"To try to find something or someone that is lost or needed.","ex":"I am looking for my phone."},{"p":"made of","ka":"დამზადებული რაღაცისგან (მასალა არ იცვლება, მაგ. ხის მაგიდა)","def":"Created using a specific material, where the material remains recognizable in its original form.","ex":"This table is made of wood."},{"p":"made from","ka":"დამზადებული რაღაცისგან (მასალა იცვლება, მაგ. ყურძნისგან ღვინო)","def":"Created using a specific material, where the original material changes its form completely.","ex":"Wine is made from grapes."}],"gaps":[["He has no ___ leave the team.","intention to","look after","known as"],["Her ___ study medicine surprised everyone.","intention to","link between","made from"],["Paris is ___ the City of Light.","known as","known for","made of"],["Dumplings are ___ khinkali in Georgia.","known as","known for","look around"],["Georgia is ___ its delicious wine.","known for","known as","leads to"],["The actor is ___ his funny roles.","known for","known as","made of"],["Hard work often ___ success.","leads to","made from","look after"],["Too little sleep ___ poor results at school.","leads to","look for","made of"],["There is a clear ___ sleep and good marks.","link between","intention to","look around"],["Doctors found a ___ smoking and illness.","link between","known as","leads to"],["Parents must ___ their children and keep them safe.","look after","leads to","made of"],["Who will ___ the baby while you are at work?","look after","known for","link between"],["We had one hour to ___ the old town and see the shops.","look around","look after","made of"],["Let's ___ the museum before we go home.","look around","intention to","known as"],["I lost my keys and I am ___ them everywhere.","looking for","looking after","looking around","look for"],["She is ___ a new job in a big company.","looking for","looking after","looking around","look for"],["This ring is ___ pure gold.","made of","made from","link between"],["The bridge is ___ steel and concrete.","made of","made from","leads to"],["Wine is ___ grapes.","made from","made of","known as"],["Paper is ___ wood.","made from","made of","look for"]]}];
+const STAGES={"1":"Stage 1: Free demo"};
+const BONUS=[{"title":"A Trip to Kazbegi","t":"Last spring our class visited Kazbegi. Our teacher booked the minibus (1) advance, and we set (2) at six o'clock. The village is far (3) the capital, and on the road the minibus broke (4) near Mtskheta. The driver repaired it quickly. In Stepantsminda we had two hours to look (5) the village. Nino lost her glove and was looking (6) it everywhere. The town is known (7) the gateway to the mountains, and it is known (8) its beautiful peaks. The stars are very bright (9) night. We did not run (10) of water, because we had bought many bottles. Every student was (11) the list, so nobody was left behind. (12) far, this is the best trip of my life.","g":[["in","on","at","by"],["off","on","up","in"],["from","of","to","at"],["down","up","off","out"],["around","into","up","off"],["for","to","of","by"],["as","of","to","by"],["for","as","of","to"],["at","in","on","for"],["out","off","up","away"],["on","at","by","to"],["So","As","Too","How"]]}];
+
+</script>
+<script>
+let T;
+const $=s=>document.querySelector(s), app=$("#app"), L=["A","B","C"];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const load=()=>{try{return JSON.parse(localStorage.getItem("pv_progress"))||{}}catch(e){return{}}};
+const mark=(id,patch)=>{const p=load();p[id]={...p[id],...patch};try{localStorage.setItem("pv_progress",JSON.stringify(p))}catch(e){}};
+const mix=m=>{const vs=[],gs=[];LEVELS.forEach(l=>{if(l.verbs&&!l.mixed&&(!m.mixOf||m.mixOf.includes(l.id))){l.verbs.forEach(v=>vs.push({...v,lv:l.id}));gs.push(...l.gaps)}});return{verbs:vs,gaps:gs}};
+const get=id=>{const l=LEVELS.find(x=>x.id===id);return l&&l.mixed?{...l,...mix(l)}:l};
+const unlocked=id=>{const i=LEVELS.findIndex(l=>l.id===id);return i===0||!!(load()[LEVELS[i-1].id]||{}).passed};
+const go=h=>{location.hash="#/"+h};
+const loadB=()=>{try{return JSON.parse(localStorage.getItem("pv_bonus"))||{}}catch(e){return{}}};
+const markB=(i,p)=>{const b=loadB();b[i]={...b[i],...p};try{localStorage.setItem("pv_bonus",JSON.stringify(b))}catch(e){}};
+const bonusOpen=i=>i===0||!!(loadB()[i-1]||{}).passed;
+const head=(id,t)=>`<a class="back" href="#/level/${id}">‹ ${get(id).title}</a><h1>${t}</h1>`;
+
+/* სწორი პასუხის პოზიცია თანაბრად ნაწილდება A/B/C-ზე და ზედიზედ 3-ჯერ არ მეორდება */
+function positions(n,m=3){
+ const a=[];for(let i=0;i<n;i++)a.push(i%m);
+ for(let t=0;t<300;t++){shuffle(a);if(!a.some((v,i)=>i>1&&v===a[i-1]&&v===a[i-2]))break}
+ return a;
+}
+const mk=(text,answer,wrong,exp)=>({text,answer,wrong:shuffle(wrong.slice()).slice(0,2),exp});
+function place(qs){const pos=positions(qs.length);qs.forEach((q,i)=>{const o=q.wrong.slice();o.splice(pos[i],0,q.answer);q.opts=o});return qs}
+const expV=v=>`<b>${v.p}</b> – ${v.ka}<br><i>${v.ex}</i>`;
+function bank(lv){
+ const V=lv.verbs,out=[];
+ lv.gaps.forEach(g=>{
+  const v=V.find(x=>x.p.toLowerCase()===(g[4]||g[1]).toLowerCase());
+  out.push(mk(g[0].replace("___",'<span class="blank">_____</span>'),g[1],[g[2],g[3]],`${g[0].replace("___","<b>"+g[1]+"</b>")}<br>${v.p} – ${v.ka}`));
+ });
+ V.forEach(v=>{
+  const others=()=>V.filter(x=>x!==v&&x.lv===v.lv).map(x=>x.p);
+  out.push(mk(`Which phrase means: <i>${v.ka}</i>`,v.p,others(),expV(v)));
+  out.push(mk(`Which phrase matches this definition?<br><i>${v.def}</i>`,v.p,others(),expV(v)));
+ });
+ return out;
+}
+
+function quiz(qs,{id,title,instant,onEnd}){
+ let i=0,score=0,log=[];
+ const next=()=>{i++;i<qs.length?show():onEnd(score,log)};
+ function show(){
+  const q=qs[i];
+  app.innerHTML=`${head(id,title)}<div class="bar"><i style="width:${i/qs.length*100}%"></i></div><p class="meta">Question ${i+1} of ${qs.length}</p><h2 class="q">${q.text}</h2><div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}"><b>${L[k]}</b><span>${o}</span></button>`).join("")}</div><div id="fb"></div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+   const o=q.opts[+b.dataset.k],ok=o===q.answer;
+   log.push({q,o,ok});if(ok)score++;
+   app.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+   if(!instant){b.classList.add("pick");setTimeout(next,250);return}
+   b.classList.add(ok?"right":"wrong");
+   if(!ok)app.querySelectorAll(".opt").forEach(x=>{if(q.opts[+x.dataset.k]===q.answer)x.classList.add("right")});
+   $("#fb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><p>${ok?"Correct!":"Not quite."} ${q.exp}</p><button class="btn" id="nx">${i===qs.length-1?"See result":"Next"}</button></div>`;
+   $("#nx").onclick=next;$("#nx").focus();
+  });
+ }
+ show();
+}
+
+function map(){
+ const p=load();
+ app.innerHTML=`<h1>Phrase Collocations</h1><p class="lead">Pass each final test with ${PASS_PERCENT}% or more to unlock the next level.</p><div class="levels">${LEVELS.map((l,i)=>{
+  const s=p[l.id]||{},open=i===0||(p[LEVELS[i-1].id]||{}).passed;
+  const st=!l.ready?(open?"soon":"locked"):!open?"locked":s.passed?"done":"open";
+  const num=l.mixed?"★":LEVELS.filter(x=>!x.mixed&&x.id<=l.id).length;
+  const ic={done:"✓",open:num,soon:"🔒",locked:"🔒"}[st];
+  const sub={done:"Passed with "+s.best+"%",open:s.best?"Best score "+s.best+"%, keep going":(get(l.id).verbs||[]).length+" phrases + final test",soon:"Coming soon",locked:"Pass the previous level first"}[st];
+  const inner=`<span class="n">${ic}</span><span><b>${l.title}: ${l.range}</b><small>${sub}</small></span>`;
+  return (STAGES[l.id]?`<h2 class="stage">${STAGES[l.id]}</h2>`:"")+(st==="open"||st==="done"?`<a class="lvl ${st}" href="#/level/${l.id}">${inner}</a>`:`<div class="lvl ${st}">${inner}</div>`);
+ }).join("")}</div><h2 class="stage">Bonus</h2><div class="levels"><a class="lvl open" href="#/bonus"><span class="n">★</span><span><b>Bonus Tasks</b><small>${BONUS.filter((_,i)=>(loadB()[i]||{}).passed).length} of ${BONUS.length} passed. Exam-style texts with every phrase</small></span></a></div><button class="link" id="reset">Reset progress</button>`;
+ $("#reset").onclick=()=>{if(confirm("Delete all saved progress on this device?")){try{localStorage.removeItem("pv_progress");localStorage.removeItem("pv_bonus")}catch(e){}map()}};
+}
+
+const STEPS=[["learn","Learn","Flashcards for every phrase"],["pairs","Match pairs","Phrase and Georgian meaning"],["gaps","Fill the gap","10 sentences with feedback"],["build","Build the sentence","Put the words in the right order"],["type","Type the phrase","Write the English phrase"],["memory","Memory game","Find the matching pairs"],["speed","Speed round","60 seconds, answer as fast as you can"],["exam","Exam task","Read the text and choose A, B, C or D"],["test","Final test",""]];
+const legacy={learn:"learned",pairs:"practice",gaps:"practice",memory:"games"};
+const isDone=(s,k)=>k==="test"?!!s.passed:!!(s[k]||s[legacy[k]]||s.passed);
+const stepsFor=id=>STEPS.filter(x=>x[0]!=="exam"||get(id).exam);
+const stepOpen=(id,k)=>{const s=load()[id]||{},S=stepsFor(id),i=S.findIndex(x=>x[0]===k);return i>=0&&S.slice(0,i).every(x=>isDone(s,x[0]))};
+function hub(id){
+ const s=load()[id]||{},lv=get(id);
+ app.innerHTML=`<a class="back" href="#/">‹ All levels</a><h1>${lv.title}</h1><p class="lead">${lv.range}. Finish each activity to unlock the next one.</p><div class="steps">${stepsFor(id).map(([k,n,d])=>{
+  const dn=isDone(s,k),op=stepOpen(id,k);
+  const desc=k==="test"?(lv.testSize||TEST_SIZE)+" questions, pass at "+PASS_PERCENT+"%"+(s.best?", best "+s.best+"%":""):d;
+  const inner=`<b>${op?"":"🔒 "}${n}</b><small>${desc}</small>`;
+  return op?`<a class="step ${dn?"done":""}" href="#/level/${id}/${k}">${inner}</a>`:`<div class="step locked">${inner}</div>`;
+ }).join("")}</div>`;
+}
+
+function learn(id){
+ const V=get(id).verbs;let i=0,flip=false;const seen=new Set();
+ const draw=()=>{
+  const v=V[i];seen.add(i);
+  app.innerHTML=`${head(id,"Learn")}<p class="meta">Card ${i+1} of ${V.length}. Tap the card to flip it.</p><button class="card ${flip?"back":""}" id="card">${flip?`<span class="ka">${v.ka}</span><small>${v.def}</small><em>${v.ex}</em>`:`<span class="en">${v.p}</span>`}</button><div class="row"><button class="btn ghost" id="pv" ${i?"":"disabled"}>Previous</button><button class="btn" id="nx">${i===V.length-1?"Finish":"Next"}</button></div>`;
+  $("#card").onclick=()=>{flip=!flip;draw()};
+  $("#pv").onclick=()=>{i--;flip=false;draw()};
+  $("#nx").onclick=()=>{if(i<V.length-1){i++;flip=false;draw()}else{if(seen.size===V.length)mark(id,{learn:true});go("level/"+id)}};
+ };
+ draw();
+}
+
+function pairs(id){
+ let V=get(id).verbs;if(V.length>10)V=shuffle(V.slice()).slice(0,10);let sel=null,done=0,miss=0;
+ const side=(s,key)=>shuffle(V.map((v,i)=>i)).map(i=>`<button class="m" data-s="${s}" data-i="${i}">${V[i][key]}</button>`).join("");
+ app.innerHTML=`${head(id,"Match pairs")}<p class="meta">Tap a phrase, then its Georgian meaning.</p><div class="two"><div>${side("l","p")}</div><div>${side("r","ka")}</div></div><p class="meta" id="info"></p>`;
+ app.querySelectorAll(".m").forEach(b=>b.onclick=()=>{
+  if(b.disabled)return;
+  if(b.dataset.s==="l"){app.querySelectorAll('.m[data-s="l"]').forEach(x=>x.classList.remove("on"));b.classList.add("on");sel=b;return}
+  if(!sel)return;
+  if(sel.dataset.i===b.dataset.i){
+   sel.disabled=b.disabled=true;sel.classList.remove("on");sel.classList.add("ok");b.classList.add("ok");sel=null;
+   if(++done===V.length){mark(id,{pairs:true});$("#info").innerHTML=`All matched! Mistakes: ${miss}. <a href="#/level/${id}">Back to level</a>`}
+  }else{miss++;b.classList.add("bad");setTimeout(()=>b.classList.remove("bad"),500)}
+ });
+}
+
+function finish(id,key,title,s,n,again,min=0){
+ const pct=n?Math.round(s/n*100):0,ok=pct>=STEP_PASS&&n>=min;
+ if(ok)mark(id,{[key]:true});
+ app.innerHTML=`${head(id,title)}<div class="score ${ok?"good":"bad"}"><strong>${s} / ${n}</strong><span>${pct}%</span></div><p class="lead">${ok?"Activity complete! The next activity is unlocked.":"You need "+STEP_PASS+"% correct"+(min?" and at least "+min+" answers":"")+" to unlock the next activity. Try again."}</p><div class="row"><button class="btn" id="again">${ok?"Play again":"Try again"}</button><a class="btn ghost" href="#/level/${id}">Back to level</a></div>`;
+ $("#again").onclick=again;
+}
+
+function gapPractice(id){
+ const lv=get(id),qs=place(shuffle(bank(lv).slice(0,lv.gaps.length)).slice(0,10));
+ quiz(qs,{id,title:"Fill the gap",instant:true,onEnd:s=>finish(id,"gaps","Fill the gap",s,qs.length,()=>gapPractice(id))});
+}
+
+function buildSentence(id){
+ const S=shuffle(get(id).verbs.slice()).slice(0,8).map(v=>v.ex);
+ let i=0,s=0;
+ const show=()=>{
+  const sen=S[i],pool=shuffle(sen.split(" ").map((x,k)=>({x,k})));
+  let ans=[],lock=false;
+  app.innerHTML=`${head(id,"Build the sentence")}<div class="bar"><i style="width:${i/S.length*100}%"></i></div><p class="meta">Sentence ${i+1} of ${S.length}. Tap the words in the right order. Tap a word again to remove it.</p><div class="slot" id="ans"></div><div class="words" id="pool"></div><div id="fb"></div><div class="row"><button class="btn" id="chk" disabled>Check</button></div>`;
+  const draw=()=>{
+   const w=o=>`<button class="w" data-k="${o.k}">${o.x}</button>`;
+   $("#ans").innerHTML=ans.map(w).join("");
+   $("#pool").innerHTML=pool.filter(o=>!ans.includes(o)).map(w).join("");
+   $("#chk").disabled=ans.length<pool.length;
+   app.querySelectorAll(".w").forEach(b=>b.onclick=()=>{if(lock)return;const o=pool.find(p=>p.k===+b.dataset.k);if(ans.includes(o))ans.splice(ans.indexOf(o),1);else ans.push(o);draw()});
+  };
+  draw();
+  $("#chk").onclick=()=>{
+   lock=true;const ok=ans.map(o=>o.x).join(" ")===sen;if(ok)s++;
+   $("#chk").remove();
+   $("#fb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><p>${ok?"Correct!":"Not quite."} ${sen}</p><button class="btn" id="nx">${i===S.length-1?"See result":"Next"}</button></div>`;
+   $("#nx").onclick=()=>{i++;i<S.length?show():finish(id,"build","Build the sentence",s,S.length,()=>buildSentence(id))};
+  };
+ };
+ show();
+}
+
+function typeIt(id){
+ const V=shuffle(get(id).verbs.filter(v=>!/[.\/]/.test(v.p))).slice(0,8);
+ const norm=x=>x.toLowerCase().trim().replace(/\s+/g," ");
+ let i=0,s=0;
+ const show=()=>{
+  const v=V[i],hint=v.p.split(" ").map(w=>"_".repeat(w.length)).join("   ");
+  app.innerHTML=`${head(id,"Type the phrase")}<div class="bar"><i style="width:${i/V.length*100}%"></i></div><p class="meta">Phrase ${i+1} of ${V.length}. Write the English phrase.</p><h2 class="q">${v.ka}</h2><p class="meta">${v.def}</p><input class="field" id="inp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${hint}"><div id="fb"></div><div class="row"><button class="btn" id="chk">Check</button></div>`;
+  const inp=$("#inp");inp.focus();
+  let done=false;
+  const check=()=>{
+   if(done)return;done=true;
+   const ok=norm(inp.value)===v.p;if(ok)s++;
+   inp.disabled=true;$("#chk").remove();
+   $("#fb").innerHTML=`<div class="fb ${ok?"good":"bad"}"><p>${ok?"Correct!":"Not quite."} ${expV(v)}</p><button class="btn" id="nx">${i===V.length-1?"See result":"Next"}</button></div>`;
+   $("#nx").onclick=()=>{i++;i<V.length?show():finish(id,"type","Type the phrase",s,V.length,()=>typeIt(id))};$("#nx").focus();
+  };
+  $("#chk").onclick=check;inp.onkeydown=e=>{if(e.key==="Enter")check()};
+ };
+ show();
+}
+
+function speed(id){
+ const lv=get(id),qs=place(shuffle(bank(lv)).slice(0,40));
+ let i=0,s=0,n=0,t=60,busy=false;
+ clearInterval(T);
+ const show=()=>{
+  const q=qs[i];
+  app.innerHTML=`${head(id,"Speed round")}<div class="bar"><i id="tb" style="width:${t/60*100}%"></i></div><p class="meta"><b id="tt">${t}</b> seconds left. Correct: ${s} of ${n}</p><h2 class="q">${q.text}</h2><div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}"><b>${L[k]}</b><span>${o}</span></button>`).join("")}</div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+   if(busy)return;busy=true;
+   const ok=q.opts[+b.dataset.k]===q.answer;n++;if(ok)s++;
+   b.classList.add(ok?"right":"wrong");
+   if(!ok)app.querySelectorAll(".opt").forEach(x=>{if(q.opts[+x.dataset.k]===q.answer)x.classList.add("right")});
+   setTimeout(()=>{busy=false;i++;if(t>0&&i<qs.length)show();else if(i>=qs.length)t=0},ok?350:900);
+  });
+ };
+ show();
+ T=setInterval(()=>{
+  t--;const a=$("#tt");if(a){a.textContent=t;$("#tb").style.width=t/60*100+"%"}
+  if(t<=0){clearInterval(T);finish(id,"speed","Speed round",s,n,()=>speed(id),10)}
+ },1000);
+}
+
+function exam(id){
+ const E=get(id).exam,n=E.g.length,pos=positions(n,4),pick=Array(n).fill(-1);
+ const items=E.g.map((g,i)=>{const o=shuffle(g.slice(1));o.splice(pos[i],0,g[0]);return o});
+ const text=E.t.replace(/\((\d+)\)/g,(m,k)=>`<b class="gapn">(${k}) ____</b>`);
+ app.innerHTML=`${head(id,"Exam task")}<p class="meta">Read the text and mark the correct choice A, B, C or D. (${n} points)</p><div class="passage">${text}</div>${items.map((o,i)=>`<div class="erow"><span>${i+1}.</span>${o.map((x,k)=>`<button class="eo" data-i="${i}" data-k="${k}"><b>${"ABCD"[k]}.</b> ${x}</button>`).join("")}</div>`).join("")}<div id="res"></div><div class="row"><button class="btn" id="chk" disabled>Check answers</button></div>`;
+ const eos=[...app.querySelectorAll(".eo")];
+ let fin=false;
+ eos.forEach(b=>b.onclick=()=>{
+  if(fin)return;
+  const i=+b.dataset.i;pick[i]=+b.dataset.k;
+  eos.filter(x=>+x.dataset.i===i).forEach(x=>x.classList.toggle("sel",x===b));
+  $("#chk").disabled=pick.includes(-1);
+ });
+ $("#chk").onclick=()=>{
+  fin=true;let s=0;
+  eos.forEach(b=>{
+   const i=+b.dataset.i,k=+b.dataset.k,ok=items[i][k]===E.g[i][0];
+   if(ok){b.classList.add("right");if(pick[i]===k)s++}else if(pick[i]===k)b.classList.add("wrong");
+   b.disabled=true;
+  });
+  const pct=Math.round(s/n*100),ok=pct>=STEP_PASS;
+  if(ok)mark(id,{exam:true});
+  $("#chk").remove();
+  $("#res").innerHTML=`<div class="score ${ok?"good":"bad"}"><strong>${s} / ${n}</strong><span>${pct}%</span></div><p class="lead">${ok?"Activity complete! The next activity is unlocked.":"You need "+STEP_PASS+"% to unlock the next activity. Try again."}</p><div class="row"><button class="btn" id="again">${ok?"Play again":"Try again"}</button><a class="btn ghost" href="#/level/${id}">Back to level</a></div>`;
+  $("#again").onclick=()=>exam(id);
+  $("#res").scrollIntoView({behavior:"smooth"});
+ };
+}
+
+function memory(id){
+ const V=shuffle(get(id).verbs.slice()).slice(0,6);
+ const cards=shuffle(V.flatMap((v,i)=>[{i,t:v.p},{i,t:v.ka}]));
+ let open=[],moves=0,found=0,lock=false;
+ app.innerHTML=`${head(id,"Memory game")}<p class="meta">Find each phrase and its Georgian meaning.</p><div class="grid">${cards.map(c=>`<button class="mem"><span>${c.t}</span></button>`).join("")}</div><p class="meta" id="info">Moves: 0</p>`;
+ const bs=[...app.querySelectorAll(".mem")];
+ bs.forEach((b,k)=>b.onclick=()=>{
+  if(lock||b.classList.contains("up")||b.classList.contains("done"))return;
+  b.classList.add("up");open.push(k);
+  if(open.length<2)return;
+  moves++;const [a,c]=open;open=[];
+  $("#info").textContent="Moves: "+moves;
+  if(cards[a].i===cards[c].i){
+   [a,c].forEach(x=>bs[x].classList.replace("up","done"));
+   if(++found===V.length){mark(id,{memory:true});$("#info").innerHTML=`Done in ${moves} moves! <a href="#/level/${id}">Back to level</a> <button class="link" id="again">Play again</button>`;$("#again").onclick=()=>memory(id)}
+  }else{lock=true;setTimeout(()=>{bs[a].classList.remove("up");bs[c].classList.remove("up");lock=false},800)}
+ });
+}
+
+function test(id){
+ const lv=get(id),qs=place(shuffle(bank(lv)).slice(0,lv.testSize||TEST_SIZE));
+ quiz(qs,{id,title:"Final test",instant:false,onEnd:(s,log)=>{
+  const old=load()[id]||{},pct=Math.round(s/qs.length*100),pass=pct>=PASS_PERCENT;
+  mark(id,{best:Math.max(pct,old.best||0),passed:pass||!!old.passed});
+  const wrong=log.filter(x=>!x.ok);
+  app.innerHTML=`${head(id,"Result")}<div class="score ${pass?"good":"bad"}"><strong>${pct}%</strong><span>${s} of ${qs.length} correct</span></div><p class="lead">${pass?"Level passed! The next level is unlocked.":"You need "+PASS_PERCENT+"% to pass. Check the mistakes below, then try again."}</p><div class="row"><button class="btn" id="again">${pass?"Take the test again":"Try again"}</button><a class="btn ghost" href="#/">All levels</a></div>${wrong.length?`<h2>Review</h2>${wrong.map(x=>`<div class="fb bad"><p>${x.q.text}<br>Your answer: <b>${x.o}</b></p><p>${x.q.exp}</p></div>`).join("")}`:""}`;
+  $("#again").onclick=()=>test(id);
+ }});
+}
+
+function bonusList(){
+ const b=loadB();
+ app.innerHTML=`<a class="back" href="#/">‹ All levels</a><h1>Bonus Tasks</h1><p class="lead">Read each text and mark the correct choice A, B, C or D. Pass a task with ${PASS_PERCENT}% to unlock the next one. Together the tasks use every phrase from all 20 levels.</p><div class="levels">${BONUS.map((t,i)=>{
+  const s=b[i]||{},open=bonusOpen(i),st=s.passed?"done":open?"open":"locked";
+  const ic={done:"✓",open:i+1,locked:"🔒"}[st];
+  const sub={done:"Passed with "+s.best+"%",open:s.best?"Best score "+s.best+"%, keep going":t.g.length+" points",locked:"Pass the previous task first"}[st];
+  const inner=`<span class="n">${ic}</span><span><b>Task ${i+1}: ${t.title}</b><small>${sub}</small></span>`;
+  return st==="locked"?`<div class="lvl locked">${inner}</div>`:`<a class="lvl ${st}" href="#/bonus/${i}">${inner}</a>`;
+ }).join("")}</div>`;
+}
+
+function bonusTask(bi){
+ const E=BONUS[bi],n=E.g.length,pos=positions(n,4),pick=Array(n).fill(-1);
+ const items=E.g.map((g,i)=>{const o=shuffle(g.slice(1));o.splice(pos[i],0,g[0]);return o});
+ const text=E.t.replace(/\((\d+)\)/g,(m,k)=>`<b class="gapn">(${k}) ____</b>`);
+ app.innerHTML=`<a class="back" href="#/bonus">‹ Bonus tasks</a><h1>Task ${bi+1}: ${E.title}</h1><p class="meta">Read the text and mark the correct choice A, B, C or D. (${n} points)</p><div class="passage">${text}</div>${items.map((o,i)=>`<div class="erow"><span>${i+1}.</span>${o.map((x,k)=>`<button class="eo" data-i="${i}" data-k="${k}"><b>${"ABCD"[k]}.</b> ${x}</button>`).join("")}</div>`).join("")}<div id="res"></div><div class="row"><button class="btn" id="chk" disabled>Check answers</button></div>`;
+ const eos=[...app.querySelectorAll(".eo")];
+ let fin=false;
+ eos.forEach(b=>b.onclick=()=>{
+  if(fin)return;
+  const i=+b.dataset.i;pick[i]=+b.dataset.k;
+  eos.filter(x=>+x.dataset.i===i).forEach(x=>x.classList.toggle("sel",x===b));
+  $("#chk").disabled=pick.includes(-1);
+ });
+ $("#chk").onclick=()=>{
+  fin=true;let s=0;
+  eos.forEach(b=>{
+   const i=+b.dataset.i,k=+b.dataset.k,ok=items[i][k]===E.g[i][0];
+   if(ok){b.classList.add("right");if(pick[i]===k)s++}else if(pick[i]===k)b.classList.add("wrong");
+   b.disabled=true;
+  });
+  const pct=Math.round(s/n*100),ok=pct>=PASS_PERCENT,old=loadB()[bi]||{};
+  markB(bi,{best:Math.max(pct,old.best||0),passed:ok||!!old.passed});
+  $("#chk").remove();
+  const nxt=ok&&BONUS[bi+1]?`<a class="btn" href="#/bonus/${bi+1}">Next task</a>`:"";
+  $("#res").innerHTML=`<div class="score ${ok?"good":"bad"}"><strong>${s} / ${n}</strong><span>${pct}%</span></div><p class="lead">${ok?"Task passed! The next task is unlocked.":"You need "+PASS_PERCENT+"% to unlock the next task. Try again."}</p><div class="row">${nxt}<button class="btn ${nxt?"ghost":""}" id="again">${ok?"Play again":"Try again"}</button><a class="btn ghost" href="#/bonus">All tasks</a></div>`;
+  $("#again").onclick=()=>bonusTask(bi);
+  $("#res").scrollIntoView({behavior:"smooth"});
+ };
+}
+
+function route(){
+ const h=location.hash.replace("#/","").split("/");window.scrollTo(0,0);clearInterval(T);
+ if(h[0]==="bonus"){if(h[1]===undefined||h[1]==="")return bonusList();const bi=+h[1];if(!BONUS[bi]||!bonusOpen(bi))return go("bonus");return bonusTask(bi)}
+ if(h[0]!=="level")return map();
+ const id=+h[1],lv=get(id);
+ if(!lv||!lv.ready||!unlocked(id))return go("");
+ if(h[2]&&!stepOpen(id,h[2]))return go("level/"+id);
+ ({learn,pairs,gaps:gapPractice,build:buildSentence,type:typeIt,memory,speed,exam,test}[h[2]]||hub)(id);
+}
+window.addEventListener("hashchange",route);route();
+
+</script></body></html>
